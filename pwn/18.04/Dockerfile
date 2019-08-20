@@ -2,6 +2,10 @@ FROM ubuntu:18.04
 
 MAINTAINER Kia <kia@csie.io>
 
+# Eev
+ENV TERM screen-256color
+
+
 # Update apt
 RUN dpkg --add-architecture i386 && \
     apt update -y && apt upgrade -y && \
@@ -14,16 +18,20 @@ RUN dpkg --add-architecture i386 && \
     gdb-multiarch \
     gcc-multilib \
     git \
+    gawk \
     wget curl \
     vim \
     python3-dev \
     python-dev \
     python-pip \
+    ipython \
     net-tools \
     strace ltrace \
     tmux \
     nasm \
-    ruby
+    netcat \
+    ruby \
+    ruby-dev
 
 # install ROPGadget
 RUN pip install \
@@ -41,9 +49,16 @@ RUN gem install one_gadget
 # install pwndbg pwngdb
 RUN mkdir /root/tools && git clone https://github.com/pwndbg/pwndbg /root/tools/pwndbg && cd /root/tools/pwndbg && ./setup.sh && \
     cd /root/tools && git clone https://github.com/scwuaptx/Pwngdb.git &&   \
-    cat /root/tools/Pwngdb/.gdbinit >> /root/.gdbinit && sed -i 's?source ~/peda/peda.py?# source ~/peda/peda.py?g' /root/.gdbinit
+    cat /root/tools/Pwngdb/.gdbinit >> /root/.gdbinit && sed -i 's?source ~/peda/peda.py?# source ~/peda/peda.py?g' /root/.gdbinit && \
+    sed -i 's?source ~/Pwngdb/?source ~/tools/Pwngdb/?g' /root/.gdbinit
 
- 
+# install some tools
+RUN gem install seccomp-tools
+
+# set tmux config
+RUN cd /root && wget https://raw.githubusercontent.com/kia280/MyEnv/master/tmux/.tmux.conf
+
+
 WORKDIR /root
 
 CMD ["/bin/bash"]

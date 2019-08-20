@@ -11,3 +11,4 @@ docker build -t "REPOSITORY:TAG" .
 - pwntools
 - ROPgadget
 - one_gadget
+- seccomp-tools
